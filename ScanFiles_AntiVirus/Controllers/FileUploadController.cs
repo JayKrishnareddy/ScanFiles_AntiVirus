@@ -15,11 +15,13 @@ namespace ScanFiles_AntiVirus.Controllers
     [ApiController]
     public class FileUploadController : ControllerBase
     {
-        private readonly ILogger<FileUploadController> _logger;
+       // private readonly ILogger<FileUploadController> _logger;
         private readonly IConfiguration _configuration;
-        public FileUploadController(ILogger<FileUploadController> logger, IConfiguration configuration)
+        public FileUploadController(
+            //ILogger<FileUploadController> logger, 
+            IConfiguration configuration)
         {
-            _logger = logger;
+            //_logger = logger;
             _configuration = configuration;
         }
 
@@ -32,37 +34,41 @@ namespace ScanFiles_AntiVirus.Controllers
             var ms = new MemoryStream();
             file.OpenReadStream().CopyTo(ms);
             byte[] fileBytes = ms.ToArray();
-
+            string Result = string.Empty;
             try
             {
-                this._logger.LogInformation("ClamAV scan begin for file {0}", file.FileName);
+               
+               // this._logger.LogInformation("ClamAV scan begin for file {0}", file.FileName);
                 var clam = new ClamClient(this._configuration["ClamAVServer:URL"],
                                           Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
-                var scanResult = await clam.SendAndScanFileAsync(fileBytes);
+               var scanResult = await clam.SendAndScanFileAsync(fileBytes);
                 switch (scanResult.Result)
                 {
                     case ClamScanResults.Clean:
-                        this._logger.LogInformation("The file is clean! ScanResult:{1}", scanResult.RawResult);
+                        Result = "Clean";
+                 //       this._logger.LogInformation("The file is clean! ScanResult:{1}", scanResult.RawResult);
                         break;
                     case ClamScanResults.VirusDetected:
-                        this._logger.LogError("Virus Found! Virus name: {1}", scanResult.InfectedFiles.FirstOrDefault().VirusName);
+                        Result = "Virus Detected";
+                        //     this._logger.LogError("Virus Found! Virus name: {1}", scanResult.InfectedFiles.FirstOrDefault().VirusName);
                         break;
                     case ClamScanResults.Error:
-                        this._logger.LogError("An error occured while scaning the file! ScanResult: {1}", scanResult.RawResult);
+                        Result = "Error in File";
+                        //   this._logger.LogError("An error occured while scaning the file! ScanResult: {1}", scanResult.RawResult);
                         break;
                     case ClamScanResults.Unknown:
-                        this._logger.LogError("Unknown scan result while scaning the file! ScanResult: {0}", scanResult.RawResult);
+                        Result = "Unknown File";
+                        // this._logger.LogError("Unknown scan result while scaning the file! ScanResult: {0}", scanResult.RawResult);
                         break;
                 }
             }
             catch (Exception ex)
             {
-
-                this._logger.LogError("ClamAV Scan Exception: {0}", ex.ToString());
+                //this._logger.LogError("ClamAV Scan Exception: {0}", ex.ToString());
             }
-            this._logger.LogInformation("ClamAV scan completed for file {0}", file.FileName);
+            //this._logger.LogInformation("ClamAV scan completed for file {0}", file.FileName);
 
-            return Ok("Done");
+            return Ok(Result);
         }
     }
 }
