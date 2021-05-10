@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ScanFiles_AntiVirus.Controllers
@@ -37,11 +38,11 @@ namespace ScanFiles_AntiVirus.Controllers
             string Result = string.Empty;
             try
             {
-               
                // this._logger.LogInformation("ClamAV scan begin for file {0}", file.FileName);
-                var clam = new ClamClient(this._configuration["ClamAVServer:URL"],
-                                          Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
-               var scanResult = await clam.SendAndScanFileAsync(fileBytes);
+                //var clam = new ClamClient(this._configuration["ClamAVServer:URL"],
+                                          //Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
+                var clam = new ClamClient(IPAddress.Parse("127.0.0.1"), 3310);
+                var scanResult = await clam.SendAndScanFileAsync(fileBytes);
                 switch (scanResult.Result)
                 {
                     case ClamScanResults.Clean:
