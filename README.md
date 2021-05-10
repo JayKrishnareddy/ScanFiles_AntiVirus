@@ -9,3 +9,6 @@ Run - Commansd prompt
 - docker run -d -p 3310:3310 mkodockx/docker-clamav:alpine
 - docker run -d -p 3310:3310 mk0x/docker-clamav
 - docker ps
+
+
+Without Docker support we can scan files via Port no
