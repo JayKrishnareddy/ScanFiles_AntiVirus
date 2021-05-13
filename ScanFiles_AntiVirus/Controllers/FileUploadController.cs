@@ -16,13 +16,10 @@ namespace ScanFiles_AntiVirus.Controllers
     [ApiController]
     public class FileUploadController : ControllerBase
     {
-       // private readonly ILogger<FileUploadController> _logger;
         private readonly IConfiguration _configuration;
         public FileUploadController(
-            //ILogger<FileUploadController> logger, 
             IConfiguration configuration)
         {
-            //_logger = logger;
             _configuration = configuration;
         }
 
@@ -47,27 +44,22 @@ namespace ScanFiles_AntiVirus.Controllers
                 {
                     case ClamScanResults.Clean:
                         Result = "Clean";
-                 //       this._logger.LogInformation("The file is clean! ScanResult:{1}", scanResult.RawResult);
                         break;
                     case ClamScanResults.VirusDetected:
                         Result = "Virus Detected";
-                        //     this._logger.LogError("Virus Found! Virus name: {1}", scanResult.InfectedFiles.FirstOrDefault().VirusName);
                         break;
                     case ClamScanResults.Error:
                         Result = "Error in File";
-                        //   this._logger.LogError("An error occured while scaning the file! ScanResult: {1}", scanResult.RawResult);
                         break;
                     case ClamScanResults.Unknown:
                         Result = "Unknown File";
-                        // this._logger.LogError("Unknown scan result while scaning the file! ScanResult: {0}", scanResult.RawResult);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                //this._logger.LogError("ClamAV Scan Exception: {0}", ex.ToString());
+                throw;
             }
-            //this._logger.LogInformation("ClamAV scan completed for file {0}", file.FileName);
 
             return Ok(Result);
         }
