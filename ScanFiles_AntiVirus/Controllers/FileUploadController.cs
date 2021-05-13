@@ -35,30 +35,24 @@ namespace ScanFiles_AntiVirus.Controllers
             string Result = string.Empty;
             try
             {
-               // this._logger.LogInformation("ClamAV scan begin for file {0}", file.FileName);
                 //var clam = new ClamClient(this._configuration["ClamAVServer:URL"],
-                                          //Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
+                //Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
                 var clam = new ClamClient(IPAddress.Parse("127.0.0.1"), 3310);
                 var scanResult = await clam.SendAndScanFileAsync(fileBytes);
-                switch (scanResult.Result)
+
+                // Switch Expression C# 8.0 
+                Result =  scanResult.Result switch
                 {
-                    case ClamScanResults.Clean:
-                        Result = "Clean";
-                        break;
-                    case ClamScanResults.VirusDetected:
-                        Result = "Virus Detected";
-                        break;
-                    case ClamScanResults.Error:
-                        Result = "Error in File";
-                        break;
-                    case ClamScanResults.Unknown:
-                        Result = "Unknown File";
-                        break;
-                }
+                    ClamScanResults.Clean => "Clean",
+                    ClamScanResults.VirusDetected => "Virus Detected",
+                    ClamScanResults.Error => "Error in File",
+                    ClamScanResults.Unknown => "Unknown File",
+                          _ => "No case available"
+                };
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
             return Ok(Result);
