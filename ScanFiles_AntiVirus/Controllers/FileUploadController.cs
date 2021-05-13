@@ -35,9 +35,12 @@ namespace ScanFiles_AntiVirus.Controllers
             string Result = string.Empty;
             try
             {
-                //var clam = new ClamClient(this._configuration["ClamAVServer:URL"],
-                //Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
-                var clam = new ClamClient(IPAddress.Parse("127.0.0.1"), 3310);
+                // Scan with Docker image
+                var clam = new ClamClient(this._configuration["ClamAVServer:URL"],
+                Convert.ToInt32(this._configuration["ClamAVServer:Port"]));
+
+                // Scan with Clam Av server
+                //var clam = new ClamClient(IPAddress.Parse("127.0.0.1"), 3310);
                 var scanResult = await clam.SendAndScanFileAsync(fileBytes);
 
                 // Switch Expression C# 8.0 
